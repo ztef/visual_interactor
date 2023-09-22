@@ -6,6 +6,10 @@ const fs = require('fs');
 let mainWindow;
 let splashWindow;
 let aboutWindow;
+ 
+const baseUrl = "https://visualinteractor.azurewebsites.net/";
+
+//const baseUrl = "http://localhost:8080/";
 
 
 if (require('electron-squirrel-startup')) app.quit();
@@ -36,7 +40,7 @@ function createSplashWindow() {
     },
   });
 
-  splashWindow.loadURL('https://visualinteractor.azurewebsites.net/splash.html');
+  splashWindow.loadURL(baseUrl+'splash.html');
 
   splashWindow.on('closed', () => {
     splashWindow = null;
@@ -71,7 +75,7 @@ function createMainWindow() {
 
 
   
-  mainWindow.loadURL('https://visualinteractor.azurewebsites.net/getMain?usr='+usr);
+  mainWindow.loadURL(baseUrl+'getMain?usr='+usr);
   
 
   mainWindow.on('closed', () => {
@@ -123,7 +127,7 @@ function createMainWindow() {
             inputDialog.setMenu(null);
 
             //inputDialog.loadFile('input_dialog.html');
-            inputDialog.loadURL('https://visualinteractor.azurewebsites.net/getMenu?usr='+usr);
+            inputDialog.loadURL(baseUrl+'getMenu?usr='+usr);
           },
         },
         {
@@ -183,7 +187,7 @@ function createAboutWindow() {
     },
   });
 
-  aboutWindow.loadURL('https://visualinteractor.azurewebsites.net/about.html');
+  aboutWindow.loadURL(baseUrl+'about.html');
 
   aboutWindow.setMenu(null);
 
@@ -231,7 +235,7 @@ ipcMain.on('load-url', (event, url) => {
 
 ipcMain.on('set-usr', (event, usr) => {
   storeUsrToFile(usr);
-  mainWindow.loadURL('https://visualinteractor.azurewebsites.net/getMain?usr='+usr);
+  mainWindow.loadURL(baseUrl+'getMain?usr='+usr);
 });
 
 
