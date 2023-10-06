@@ -1,4 +1,10 @@
- 
+/*
+
+  VISUAL INTERACTOR by Visual Interaction Systems
+
+
+*/
+
 const { app,  BrowserWindow,  Menu, dialog, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
