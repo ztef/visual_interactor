@@ -93,7 +93,7 @@ function createMainWindow() {
    
 
     // Set the window title dynamically (replace 'Your Main Window Title' with your desired title)
-    mainWindow.setTitle('Visual Interactor v1.0.0');
+    mainWindow.setTitle('Visual Interactor v1.0.1s');
   });
 
 
