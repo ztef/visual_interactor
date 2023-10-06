@@ -12,7 +12,8 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-       
+        certificateFile: './certificate.pfx',
+        certificatePassword: process.env.CERTIFICATE_PASSWORD
        
       },
     },
@@ -37,8 +38,8 @@ module.exports = {
   ],
   hooks: {
     packageAfterCopy: async (config, buildPath, electronVersion, platform, arch) => {
-      var src = path.join(__dirname, './config/');
-      var dst = buildPath;
+      const src = path.join(__dirname, './config/');
+      const dst = buildPath;
       fs.cpSync(src, dst, {recursive: true});
     }
   }

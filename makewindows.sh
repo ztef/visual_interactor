@@ -1,2 +1,2 @@
-npx electron-forge make --platform win32
+sudo npx electron-forge make --platform win32
 

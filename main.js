@@ -9,7 +9,7 @@ let aboutWindow;
  
 const baseUrl = "https://visualinteractor.azurewebsites.net/";
 
-//const baseUrl = "http://localhost:8080/";
+
 
 
 if (require('electron-squirrel-startup')) app.quit();
@@ -66,7 +66,7 @@ function createMainWindow() {
   }); 
 
   
-  //mainWindow.webContents.openDevTools();
+ 
   
 
   mainWindow.webContents.on('dom-ready', () => {
@@ -83,7 +83,7 @@ function createMainWindow() {
   });
 
   mainWindow.once('ready-to-show', () => {
-    //mainWindow.show();
+   
 
     // Set the window title dynamically (replace 'Your Main Window Title' with your desired title)
     mainWindow.setTitle('Visual Interactor v1.0.0');
@@ -122,12 +122,20 @@ function createMainWindow() {
               },
             });
 
-            //inputDialog.webContents.openDevTools();
+            
 
             inputDialog.setMenu(null);
 
-            //inputDialog.loadFile('input_dialog.html');
+            
             inputDialog.loadURL(baseUrl+'getMenu?usr='+usr);
+          },
+        },
+        {
+          label: 'Reset User',
+          click: () => {
+            
+            mainWindow.loadURL(baseUrl+'getMain?usr=');
+
           },
         },
         {
@@ -228,13 +236,13 @@ ipcMain.on('get-app-version', (event) => {
 
 ipcMain.on('load-url', (event, url) => {
   const webContents = event.sender
-  const win = BrowserWindow.fromWebContents(webContents)
+  
   mainWindow.loadURL(url);
 });
 
 
 ipcMain.on('set-usr', (event, usr) => {
-  storeUsrToFile(usr);
+  storeUsrToFile({ usr: usr });
   mainWindow.loadURL(baseUrl+'getMain?usr='+usr);
 });
 
@@ -249,57 +257,50 @@ ipcMain.on('set-title', (event, title) => {
 
 
 
-function storeUsrToFile(usr) {
-  // Define the file path where you want to store the data
-  const filePath = path.join(__dirname, './resources/config/config.json');
-
-  // Check if the file already exists
-  if (fs.existsSync(filePath)) {
-    // Read the existing content of the file
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        console.error('Error reading config.json:', err);
-      } else {
-        try {
-          // Parse the existing JSON data
-          const existingData = JSON.parse(data);
-
-          // Update the existing data with the new 'usr' value
-          existingData.usr = usr;
-
-          // Convert the updated data to a JSON string
-          const jsonData = JSON.stringify(existingData);
-
-          // Write the updated JSON data back to the file
-          fs.writeFile(filePath, jsonData, (writeErr) => {
-            if (writeErr) {
-              console.error('Error writing to config.json:', writeErr);
-            } else {
-              console.log('usr data has been updated in config.json');
-            }
-          });
-        } catch (parseErr) {
-          console.error('Error parsing existing config.json data:', parseErr);
-        }
-      }
-    });
-  } else {
-    // If the file doesn't exist, create it with the 'usr' data
-    const data = {
-      usr: usr,
-    };
-
-    // Convert the data object to a JSON string
-    const jsonData = JSON.stringify(data);
-
-    // Write the JSON data to the file
-    fs.writeFile(filePath, jsonData, (err) => {
-      if (err) {
-        console.error('Error writing to config.json:', err);
-      } else {
-        console.log('usr data has been stored in config.json');
-      }
-    });
-  }
+// Function to read data from a file
+function readDataFromFile(filePath, callback) {
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      return callback(err, null);
+    }
+    try {
+      const jsonData = JSON.parse(data);
+      callback(null, jsonData);
+    } catch (parseErr) {
+      callback(parseErr, null);
+    }
+  });
 }
 
+// Function to write data to a file
+function writeDataToFile(filePath, data, callback) {
+  const jsonData = JSON.stringify(data);
+  fs.writeFile(filePath, jsonData, (err) => {
+    if (err) {
+      return callback(err);
+    }
+    callback(null);
+  });
+}
+
+// Main function to store user data in a file
+function storeUsrToFile(usr) {
+  const filePath = path.join(__dirname, './resources/config/config.json');
+
+  readDataFromFile(filePath, (readErr, existingData) => {
+    if (readErr) {
+      console.error('Error reading config.json:', readErr);
+      return;
+    }
+
+    existingData.usr = usr;
+
+    writeDataToFile(filePath, existingData, (writeErr) => {
+      if (writeErr) {
+        console.error('Error writing to config.json:', writeErr);
+        return;
+      }
+      console.log('usr data has been updated in config.json');
+    });
+  });
+}
