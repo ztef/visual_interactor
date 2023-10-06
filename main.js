@@ -86,6 +86,7 @@ function createMainWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    app.quit();
   });
 
   mainWindow.once('ready-to-show', () => {
